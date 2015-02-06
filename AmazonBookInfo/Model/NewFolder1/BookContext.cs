@@ -9,8 +9,7 @@ namespace AmazonBookInfo.Model
 {
     class BookContext:DbContext
     {
-        public BookContext()
-            : base("Model2")
+        public BookContext():base("BookInfo")
         {
             
         }

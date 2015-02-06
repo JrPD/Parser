@@ -42,20 +42,16 @@ namespace AmazonBookInfo
 {
     public partial class Form1 : Form
     {
-        BookContext dbContext;
-
         public Form1()
         {
             InitializeComponent();
-         
+           
             
         }
 
         private async void BtnSelect_Click(object sender, EventArgs e)
         {
-            dbContext = new BookContext();
-
-            List<string> contentList = await LoadDataAsync();
+            List<string> contentList =  await LoadDataAsync();
             foreach (var content in contentList)
             {
                 Parse(content);
@@ -108,20 +104,21 @@ namespace AmazonBookInfo
             IEnumerable<string> urlList = SetUpList();
             List<string> contentList = new List<string>();
 
-            foreach (var url in urlList)
-            {
-                string urlContents = await GetURLContentsAsync(url);
-                contentList.Add(urlContents);
-               // RTB.Text = urlContents;
-            }
-            //string urlContents = await GetURLContentsAsync(urlList.First());
+            //foreach (var url in urlList)
+            //{
+            //    string urlContents = await GetURLContentsAsync(url);
+
+            //    RTB.Text = urlContents;
+            //}
+            string urlContents = await GetURLContentsAsync(urlList.First());
+            contentList.Add(urlContents);
             return contentList;
 
         }
 
         private async Task<string> GetURLContentsAsync(string url)
         {
-            //var content = new MemoryStream();
+            var content = new MemoryStream();
 
             var webReq = (HttpWebRequest)WebRequest.Create(url);
 
@@ -135,16 +132,11 @@ namespace AmazonBookInfo
             }
         }
 
+
         public  void Parse(string content)
         {
             try
             {
-                //dbContext.Books.Load();
-                //var context = dbContext.Books.Local.ToBindingList();
-                //Validate();
-                //foreach (var product in context)
-                //    Print(product);
-                RTB.Text += "end print content" + '\r' + '\r' + '\r' + '\r';
 
                 HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
 
@@ -174,7 +166,7 @@ namespace AmazonBookInfo
                         }
                         catch (Exception)
                         {
-                            book.Image = "";
+                            book.Image = null;
                         }
 
                         // Name
@@ -185,7 +177,7 @@ namespace AmazonBookInfo
                         }
                         catch (Exception)
                         {
-                            book.Name = "";
+                            book.Name = null;
                         }
                        
 
@@ -197,7 +189,7 @@ namespace AmazonBookInfo
                         }
                         catch (Exception)
                         {
-                            book.Author = "";
+                            book.Author = null;
                         }
                        
 
@@ -256,16 +248,11 @@ namespace AmazonBookInfo
                                     categories.Add(item.Name);
                                 }
                             }
-                            StringBuilder sb= new StringBuilder();
-                            foreach (var category in categories)
-                            {
-                                sb.AppendLine(category);
-                            }
-                            book.Categories = sb.ToString();
+                            book.Categories = categories;
                         }
                         catch (Exception)
                         {
-                            book.Categories = "";
+                            book.Categories = null;
                         }
 
                         // Publication Data
@@ -286,7 +273,8 @@ namespace AmazonBookInfo
                         {
                             if (book != null)
                             {
-                                dbContext.Books.Add(book);
+                                //db.Books.Add(book);
+                                //db.SaveChanges();
                             }
                         }
                         catch (Exception e)
@@ -311,33 +299,15 @@ namespace AmazonBookInfo
             RTB.Text += book.Price.ToString() + '\r';
             RTB.Text += book.BestSellersRank.ToString() + '\r';
             RTB.Text +=  '\r'+"Categories" + '\r';
-            RTB.Text += book.Categories + '\r';
+            foreach (var name in book.Categories)
+            {
+                RTB.Text += name + '\r';
+            }
             RTB.Text +=  '\r';
+
             RTB.Text += book.PublicationDate.ToString() + '\r';
         }
 
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            base.OnClosing(e);
-            this.dbContext.Dispose();
-        }
-
-        private void CloseBtn_Click(object sender, System.EventArgs e)
-        {
-            Application.Exit();
-        }
-
-        private void SaveBtn_Click(object sender, System.EventArgs e)
-        {
-            try
-            {
-                dbContext.SaveChanges();
-            }
-            catch (Exception)
-            {
-                string message = "Can`t save to database";
-                MessageBox.Show(message);
-            }
-        } 
     }
+
 }

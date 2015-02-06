@@ -8,15 +8,15 @@ namespace AmazonBookInfo.Model
 {
     class Book
     {
-        public int BookId { get; set; }
+        public int BookID { get; set; }
         public string Image { get; set; }
         public string Name { get; set; }
         public string Author { get; set; }
-        public Nullable<int> Comments { get; set; }
-        public Nullable<double> Price { get; set; }
-        public Nullable<int> BestSellersRank { get; set; }
-        public string Categories { get; set; }
-        public Nullable<System.DateTime> PublicationDate { get; set; }
+        public int? Comments { get; set; }
+        public double? Price { get; set; }
+        public int? BestSellersRank { get; set; }
+        public List<string> Categories { get; set; }
+        public DateTime? PublicationDate { get; set; }
     }
     public class Category
     {
